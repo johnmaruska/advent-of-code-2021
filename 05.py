@@ -49,27 +49,27 @@ assert parse(TEST_INPUT) == PARSED
 
 def horizontal(segment):
     start, end = segment
-    return start.x == end.x
+    return start.y == end.y
 
 
 def vertical(segment):
     start, end = segment
-    return start.y == end.y
+    return start.x == end.x
 
 
 def reversible_range(start, end):
     increment = -1 if end < start else 1
     return range(start, end + increment, increment)
 
+assert list(reversible_range(0, 5)) == [0, 1, 2, 3, 4, 5]
+assert list(reversible_range(5, 0)) == [5, 4, 3, 2, 1, 0]
 
 def segment_to_points(segment):
     p1, p2 = segment
     if horizontal(segment):
-        start, end = min(p1.x, p2.x), max(p1.x, p2.x)
-        return [Point(x, p1.y) for x in range(start, end + 1)]
+        return [Point(x, p1.y) for x in reversible_range(p1.x, p2.x)]
     elif vertical(segment):
-        start, end = min(p1.y, p2.y), max(p1.y, p2.y)
-        return [Point(p1.x, y) for y in range(start, end + 1)]
+        return [Point(p1.x, y) for y in reversible_range(p1.y, p2.y)]
     else:
         return [Point(x, y) for x, y in zip(reversible_range(p1.x, p2.x), reversible_range(p1.y, p2.y))]
 
