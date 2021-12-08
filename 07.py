@@ -17,34 +17,28 @@ def fuel_cost(start, end):
     return int(d*(d+1)/2)
 
 
-def find_min_cost(positions, approach, cost_func):
-    return min([sum([cost_func(pos, meet) for pos in positions]) for meet in approach(positions)])
-
-
 def median(positions):
     positions = sorted(positions)
-    midpoint = len(positions) / 2
-    if int(midpoint) == midpoint:
-        candidates = [positions[int(midpoint)]]
-    else:
-        candidates = [positions[int(midpoint)], positions[int(midpoint) + 1]]
-    return candidates
+    return positions[int(len(positions) / 2)]
 
 
 def mean(positions):
-    mean = sum(positions) / len(positions)
-    return [int(mean), int(mean) + 1]
+    return round(sum(positions) / len(positions))
 
 
 def part1(input_str):
-    return find_min_cost(parse(input_str), median, distance)
+    positions = parse(input_str)
+    meeting_point = median(positions)
+    return sum([distance(pos, meeting_point) for pos in positions])
 
 assert part1(TEST_INPUT) == 37
 print(part1(REAL_INPUT))
 
 
 def part2(input_str):
-    return find_min_cost(parse(input_str), mean, fuel_cost)
+    positions = parse(input_str)
+    meeting_point = mean(positions)
+    return sum([fuel_cost(pos, meeting_point) for pos in positions])
 
 assert part2(TEST_INPUT) == 168
 print(part2(REAL_INPUT))
