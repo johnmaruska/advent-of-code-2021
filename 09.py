@@ -88,14 +88,6 @@ def basin(point, fed_by_map, heightmap):
     return build_basin(point)
 
 
-def repr_basins(heightmap, basins):
-    m = [['.' for c in range(10)] for r in range(5)]
-    for points in basins:
-        for point in points:
-            m[point.y][point.x] = str(height(heightmap, point))
-    return '\n'.join([''.join(row) for row in m])
-
-
 def part2(input_str):
     heightmap = parse(input_str)
     fed_by_map = fed_directly_by(heightmap)
