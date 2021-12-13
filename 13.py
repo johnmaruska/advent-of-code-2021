@@ -57,6 +57,9 @@ def make_paper(coords):
     return paper
 
 
+# not relevant for the problem but this assumes folds always land on
+# the origin. if a fold is not exactly half the paper it'll be offset
+# and the seam will break
 def merge_papers(a, b):
     return [[a[y][x] or b[y][x]
              for x in range(len(a[y]))]
@@ -99,7 +102,7 @@ print(part1(REAL_INPUT))
 
 
 def str_paper(paper):
-    return '\n'.join([''.join(['#' if cell else '.' for cell in row])
+    return '\n'.join([''.join(['#' if cell else ' ' for cell in row])
                       for row in paper])
 
 
