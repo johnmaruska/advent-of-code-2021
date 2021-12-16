@@ -21,11 +21,6 @@ def parse(input_str):
             for line in input_str.split("\n") if line]
 
 Coord = namedtuple('Coord', ['x', 'y'])
-Node = namedtuple('Node', ['coord', 'parent', 'cost'])
-
-
-def distance(coord_a, coord_b):
-    return abs(coord_a.x - coord_b.x) + abs(coord_a.y - coord_b.y)
 
 
 def adjacent(grid, coord):
@@ -41,44 +36,29 @@ def adjacent(grid, coord):
     return [ p for p in [above, below, right, left] if is_in_bounds(p) ]
 
 
-def generic_best_first_search(start, heuristic, is_goal, neighbors, weight):
+def bottom_right_most(grid):
+    max_x, max_y = len(grid[0]) - 1, len(grid) - 1
+    return Coord(max_x, max_y)
+
+
+def best_first_search(grid):
+    start, goal = Coord(0, 0), bottom_right_most(grid)
     queue = PriorityQueue()
     visited = set()
-    queue.put((0, Node(start, None, 0)))
+    queue.put((0, start))
     while not queue.empty():
-        cost, next_best_node = queue.get()
-        coord = next_best_node.coord
+        cost, coord = queue.get()
         if coord in visited:
             continue
 
         visited.add(coord)
-        if is_goal(coord):
+        if goal == coord:
             return cost
         else:
-            for neighbor in neighbors(coord):
+            for neighbor in adjacent(grid, coord):
                 if not neighbor in visited:
-                    next_cost = cost + weight(neighbor)
-                    next_node = Node(neighbor, next_best_node, next_cost)
-                    queue.put((next_cost, next_node))
-
-
-def best_first_search(grid):
-    max_x, max_y = len(grid[0]) - 1, len(grid) - 1
-    start, goal = Coord(0, 0), Coord(max_x, max_y)
-
-    def weight(coord):
-        return grid[coord.y][coord.x]
-
-    def heuristic(coord):
-        return distance(coord, goal)
-
-    def is_goal(coord):
-        return coord == goal
-
-    def neighbors(coord):
-        return adjacent(grid, coord)
-
-    return generic_best_first_search(start, heuristic, is_goal, neighbors, weight)
+                    next_cost = cost + grid[neighbor.y][neighbor.x]
+                    queue.put((next_cost, neighbor))
 
 
 def part1(input_str):
