@@ -134,23 +134,11 @@ def eval_packet(packet):
         return packet['A']
 
     subpackets = [eval_packet(subpacket) for subpacket in packet['subpackets']]
-    if T == 0:
-        return sum(subpackets)
-    elif T == 1:
-        return prod(subpackets)
-    elif T == 2:
-        return min(subpackets)
-    elif T == 3:
-        return max(subpackets)
-    elif T == 5:
-        assert len(subpackets) == 2
-        return subpackets[0] > subpackets[1]
-    elif T == 6:
-        assert len(subpackets) == 2
-        return subpackets[0] < subpackets[1]
-    elif T == 7:
-        assert len(subpackets) == 2
-        return subpackets[0] == subpackets[1]
+    def gt(xs): return xs[0] > xs[1]
+    def lt(xs): return xs[0] < xs[1]
+    def eq(xs): return xs[0] == xs[1]
+    fn = [sum, prod, min, max, None, gt, lt, eq]
+    return fn[T](subpackets)
 
 
 def part2(input_str):
