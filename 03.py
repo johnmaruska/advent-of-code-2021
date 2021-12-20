@@ -44,17 +44,16 @@ def to_string(binary):
     return "".join([str(bit) for bit in binary])
 
 
-def most_common_bit(binaries, index, tie_breaker):
+def most_common_bit(binaries, index):
     bits = [binary[index] for binary in binaries]
     ones = bits.count(1)
     zeroes = bits.count(0)
-    if ones > zeroes:  return 1
+    if ones >= zeroes: return 1
     if zeroes > ones:  return 0
-    if zeroes == ones: return tie_breaker
 
 
-def most_common_bits(binaries, tie_breaker=None):
-    return [most_common_bit(binaries, index, tie_breaker)
+def most_common_bits(binaries):
+    return [most_common_bit(binaries, index)
             for index in range(len(binaries[0]))]
 
 
@@ -62,7 +61,7 @@ assert most_common_bits(BINARIES, 0) == [1, 0, 1, 1, 0]
 
 
 def gamma_rate(binaries):
-    return to_string(most_common_bits(binaries, 1))
+    return to_string(most_common_bits(binaries))
 
 
 def epsilon_rate(gamma):
@@ -89,7 +88,7 @@ print(part1(parse(REAL_INPUT)))
 def find_rating(binaries, func):
     remaining = binaries
     for idx in range(len(binaries[0])):
-        mcb = most_common_bit(remaining, idx, 1)
+        mcb = most_common_bit(remaining, idx)
         remaining = [b for b in remaining if func(b[idx], mcb)]
         if len(remaining) == 1:
             return to_string(remaining[0])
