@@ -26,13 +26,6 @@ assert 45 == part1(TEST_INPUT)
 print(part1(REAL_INPUT))
 
 
-
-def make_probe(velocity):
-    vx, vy = velocity
-    return {'position': {'x': 0, 'y': 0},
-            'velocity': {'x': vx, 'y': vy} }
-
-
 def sign(x):
     return -1 if x < 0 else (1 if x > 0 else 0)
 
@@ -50,6 +43,13 @@ def in_area(area, position):
     return between(position['x'], area['x']) and between(position['y'], area['y'])
 
 
+def missed_area(area, probe):
+    below_y  = probe['position']['y'] < min(area['y'])
+    dropping = probe['velocity']['y'] < 0
+    passed_x = probe['position']['x'] > max(area['x'])
+    return passed_x or (below_y and dropping)
+
+
 AREA = parse('target area: x=20..30, y=-10..-5')
 assert AREA == {'x':[20, 30], 'y': [-10, -5]}
 assert in_area(AREA, {'x': 25, 'y': -7})
@@ -63,27 +63,15 @@ def step(probe):
                          'y': velocity['y'] - 1}}
 
 
-def overshot_y(area, probe):
-    below_y  = probe['position']['y'] < min(area['y'])
-    dropping = probe['velocity']['y'] < 0
-    return below_y and dropping
-
-
-def overshot_x(area, probe):
-    return probe['position']['x'] > max(area['x'])  # right of x
-
-
-def overshot(area, probe):
-    return overshot_y(area, probe) or overshot_x(area, probe)
-
-
 def velocity_works(area, velocity):
-    probe = make_probe(velocity)
+    vx, vy = velocity
+    probe = {'position': {'x': 0, 'y': 0},
+             'velocity': {'x': vx, 'y': vy} }
     while True:
         probe = step(probe)
         if in_area(area, probe['position']):
             return True
-        if overshot_y(area, probe) or overshot_x(area, probe):
+        if missed_area(area, probe):
             return False
 
 assert velocity_works(AREA, [7, 2])
